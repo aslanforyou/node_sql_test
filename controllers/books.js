@@ -20,7 +20,31 @@ const fillDb = async (req, res) => {
 }
 
 const getBooks = async (req, res) => {
+    const params = req.query;
 
+    const limit = params.limit || 10;
+    const offset = params.offset || 0;
+    const orderField = params.orderField;
+    const groupField = params.groupField;
+    const order = params.order || 'ASC';
+
+    try {
+        let request = `SELECT * FROM books `;
+        if (groupField) {
+            request = `SELECT ${groupField}, COUNT(*) AS Count FROM books GROUP BY ${groupField} `;
+        }
+        if (orderField) {
+            request += `ORDER BY ${orderField} ${order} `;
+        }
+        request += `LIMIT ${limit} OFFSET ${offset};`;
+
+        const queryResult = await db.query(request);
+
+        res.send(queryResult);
+    } catch (err) {
+        console.log("ERR ", err)
+        res.status(500).send(err);
+    }
 }
 const updateBook = async (req, res) => {
 
