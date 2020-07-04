@@ -7,17 +7,21 @@ const getFileData = async (req, res) => {
         return res.send('No file');
     }
 
-    const searchText = req.query.text;
-    const fileData = await fs.promises.readFile(filePath);
-    const linesArr = fileData.toString().split('\r\n');
+    try {
+        const searchText = req.query.text;
+        const fileData = await fs.promises.readFile(filePath);
+        const linesArr = fileData.toString().split('\r\n');
 
-    if (!searchText) {
-        return res.send(fileData.toString());
+        if (!searchText) {
+            return res.send(fileData.toString());
+        }
+
+        const result = linesArr.filter(arr => arr.includes(searchText));
+
+        return res.send(result.join('\r\n'));
+    } catch (err) {
+        return res.status(500).send(err);
     }
-
-    const result = linesArr.filter(arr => arr.includes(searchText));
-
-    return res.send(result.join('\r\n'));
 }
 
 const writeFile = async (req, res) => {
