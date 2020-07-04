@@ -52,7 +52,7 @@ const updateBook = async (req, res) => {
 const addBook = async (req, res) => {
     const params = req.body;
     if (Object.keys(params).length === 0) {
-        res.status(400).send('No book params');
+       return res.status(400).send('No book params');
     }
     const {title, autor, date, description, image} = params;
 
