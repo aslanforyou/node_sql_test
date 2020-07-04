@@ -6,8 +6,8 @@ const booksController = require('../controllers/books');
 router.get('/generate', booksController.fillDb);
 
 router.get('/', booksController.getBooks);
-router.put('/', booksController.updateBook);
 router.post('/', booksController.addBook);
+router.put('/', booksController.updateBook);
 router.delete('/', booksController.deleteBook);
 
 module.exports = router;
