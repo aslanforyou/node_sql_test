@@ -47,12 +47,43 @@ const getBooks = async (req, res) => {
     }
 }
 const updateBook = async (req, res) => {
+    const params = req.body;
+    if (Object.keys(params).length === 0) {
+        return res.status(400).send('No params');
+    }
 
+    const {index, title, autor, date, description, image} = params;
+    if (!index) {
+        return res.status(400).send('No book index provided, nothing to update');
+    }
+    if (!title && !autor && !date && !description && !image) {
+        return res.status(400).send('No values to change');
+    }
+
+    const book = {
+        title, autor, date: date ? getDateFromParam(date) : null, description, image
+    };
+
+    try {
+        let request = `UPDATE books SET `;
+        request += `${book.title ? `title='${book.title}',` : ''}`;
+        request += `${book.autor ? `autor='${book.autor}',` : ''}`;
+        request += `${book.date ? `date='${book.date}',` : ''}`;
+        request += `${book.description ? `description='${book.description}',` : ''}`;
+        request += `${book.image ? `description='${book.image}',` : ''}`;
+        request = request.slice(0, -1) + ` WHERE ind = ${index};`;
+
+        const result = await db.query(request);
+        res.send(result);
+    } catch (err) {
+        console.log("Err on update ", err)
+        res.status(500).send(err);
+    }
 }
 const addBook = async (req, res) => {
     const params = req.body;
     if (Object.keys(params).length === 0) {
-       return res.status(400).send('No book params');
+        return res.status(400).send('No book params');
     }
     const {title, autor, date, description, image} = params;
 
@@ -74,7 +105,7 @@ const addBook = async (req, res) => {
 }
 
 const getDateFromParam = date => {
-    try{
+    try {
         return new Date(date).toISOString().substring(0, 10);
     } catch (e) {
         return new Date().toISOString().substring(0, 10);
