@@ -42,7 +42,7 @@ const getBooks = async (req, res) => {
 
         res.send(queryResult);
     } catch (err) {
-        console.log("ERR ", err)
+        console.log("Err on get ", err)
         res.status(500).send(err);
     }
 }
@@ -50,8 +50,37 @@ const updateBook = async (req, res) => {
 
 }
 const addBook = async (req, res) => {
+    const params = req.body;
+    if (Object.keys(params).length === 0) {
+        res.status(400).send('No book params');
+    }
+    const {title, autor, date, description, image} = params;
 
+    const book = {
+        title, autor, date: getDateFromParam(date), description, image
+    };
+
+    try {
+        const result = await db.query(
+            `INSERT into books (title, autor, date, description, image) VALUES 
+            ('${book.title}','${book.autor}','${book.date}','${book.description}','${book.image}');`
+        );
+
+        res.send(result);
+    } catch (err) {
+        console.log("Err on add book ", err)
+        res.status(500).send(err);
+    }
 }
+
+const getDateFromParam = date => {
+    try{
+        return new Date(date).toISOString().substring(0, 10);
+    } catch (e) {
+        return new Date().toISOString().substring(0, 10);
+    }
+}
+
 const deleteBook = async (req, res) => {
 
 }
