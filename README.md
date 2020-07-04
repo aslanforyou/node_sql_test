@@ -5,7 +5,8 @@ Server on 3000 port.
 **MySQL part on  /books endpoint.**
 
 {GET}
-Returns data from test db, books table
+Returns data from test db, books table. 
+&nbsp;
 @params: limit, offset, orderField, groupField, order
 
 {POST}
