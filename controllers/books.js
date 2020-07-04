@@ -113,7 +113,22 @@ const getDateFromParam = date => {
 }
 
 const deleteBook = async (req, res) => {
+    const params = req.body;
+    if (Object.keys(params).length === 0) {
+        return res.status(400).send('No params');
+    }
 
+    const {index} = params;
+    if (!index) {
+        return res.status(400).send('No book index');
+    }
+    try {
+        const result = await db.query(`DELETE FROM books  WHERE ind = ${index};`);
+        res.send(result);
+    } catch (err) {
+        console.log("Err on delete book ", err)
+        res.status(500).send(err);
+    }
 }
 
 module.exports = {
